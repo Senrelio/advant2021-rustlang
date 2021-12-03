@@ -40,51 +40,38 @@ fn part1<const N: usize>(input: &[[bool; N]]) -> u32 {
 }
 
 fn part2<const N: usize>(input: &[[bool; N]]) -> u32 {
-    let mut cursor = 0;
-    let mut input_1 = input.into_iter().collect();
-    let oxygen = loop {
-        let remain = filter(input_1, cursor, true);
-        if remain.len() == 1 {
-            break remain[0];
-        } else {
-            input_1 = remain;
-            cursor += 1;
-            if cursor >= N {
-                cursor = 0;
-            }
-        }
-    };
-    let mut input_2 = input.into_iter().collect();
-    let mut cursor = 0;
-    let co2 = loop {
-        let remain = filter(input_2, cursor, false);
-        if remain.len() == 1 {
-            break remain[0];
-        } else {
-            input_2 = remain;
-            cursor += 1;
-            if cursor >= N {
-                cursor = 0;
-            }
-        }
-    };
+    let input_1 = input.into_iter().collect();
+    let oxygen = filter(input_1, 0, true);
     let oxygen = bitvec_to_u32(oxygen);
+    let input_2 = input.into_iter().collect();
+    let co2 = filter(input_2, 0, false);
     let co2 = bitvec_to_u32(co2);
     oxygen * co2
 }
 
-fn filter<const N: usize>(arr: Vec<&[bool; N]>, cursor: usize, flag: bool) -> Vec<&[bool; N]> {
-    assert!(cursor < N);
-    let length = arr.len();
-    let one_count = arr.iter().filter(|v| v[cursor]).count();
-    let zero_count = length - one_count;
-    let criteria = match Ord::cmp(&one_count, &zero_count) {
-        std::cmp::Ordering::Less => !flag,
-        std::cmp::Ordering::Equal => flag,
-        std::cmp::Ordering::Greater => flag,
-    };
-    let remain: Vec<&[bool; N]> = arr.into_iter().filter(|v| v[cursor] == criteria).collect();
-    remain
+fn filter<'a, const N: usize>(
+    arr: Vec<&'a [bool; N]>,
+    mut cursor: usize,
+    flag: bool,
+) -> &'a [bool; N] {
+    if arr.len() == 1 {
+        arr[0]
+    } else {
+        if cursor >= N {
+            cursor = 0;
+        }
+        let length = arr.len();
+        let one_count = arr.iter().filter(|v| v[cursor]).count();
+        let zero_count = length - one_count;
+        let criteria = match Ord::cmp(&one_count, &zero_count) {
+            std::cmp::Ordering::Less => !flag,
+            std::cmp::Ordering::Equal => flag,
+            std::cmp::Ordering::Greater => flag,
+        };
+        let remain: Vec<&'a [bool; N]> =
+            arr.into_iter().filter(|v| v[cursor] == criteria).collect();
+        filter(remain, cursor + 1, flag)
+    }
 }
 fn bitvec_to_u32(bitvec: &[bool]) -> u32 {
     bitvec
@@ -96,7 +83,6 @@ fn bitvec_to_u32(bitvec: &[bool]) -> u32 {
             false => prev,
         })
 }
-
 
 // const fn position(str: &'static str, p: char) -> usize {
 
