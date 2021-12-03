@@ -8,8 +8,10 @@ edition = "2021"
 path = "./src/lib.rs"
 
 [dependencies]
-tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
-chrono = "*"
+# tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
+# chrono = "*"
+regex = "*"
+lazy_static = "*"
 
 [build-dependencies]
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
