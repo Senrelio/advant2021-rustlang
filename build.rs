@@ -1,14 +1,14 @@
 use std::io::{Read, Write};
 
-use chrono::Datelike;
+use chrono::{Datelike, FixedOffset};
 use flate2::read::GzDecoder;
 use hyper::{Body, Client, Request, Uri};
 use hyper_tls::HttpsConnector;
 
 #[tokio::main]
 async fn main() {
-    let now = chrono::Local::now().day();
-    for i in 1..=now {
+    let now = chrono::Utc::now().with_timezone(&FixedOffset::west(5 * 3600));
+    for i in 1..=now.day() {
         let file_path = format!("./inputs/day{}_input", i);
         if !std::path::Path::new(&file_path).exists() {
             let input = download_input(2021, i).await;
