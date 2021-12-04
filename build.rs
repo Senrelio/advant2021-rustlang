@@ -1,4 +1,7 @@
-use std::io::{Read, Write};
+use std::{
+    error::Error,
+    io::{Read, Write},
+};
 
 use chrono::{Datelike, FixedOffset};
 use flate2::read::GzDecoder;
@@ -6,28 +9,29 @@ use hyper::{Body, Client, Request, Uri};
 use hyper_tls::HttpsConnector;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
     let now = chrono::Utc::now().with_timezone(&FixedOffset::west(5 * 3600));
     for i in 1..=now.day() {
         let file_path = format!("./inputs/day{}_input", i);
         if !std::path::Path::new(&file_path).exists() {
             let input = download_input(2021, i).await;
-            let mut file = std::fs::File::create(file_path).unwrap();
-            file.write_all(input.as_bytes()).unwrap();
-            file.flush().unwrap();
+            if let Ok(input) = input {
+                let mut file = std::fs::File::create(file_path)?;
+                file.write_all(input.as_bytes())?;
+                file.flush()?;
+            }
         }
     }
+    Ok(())
 }
 
-pub async fn download_input(year: i32, day: u32) -> String {
+pub async fn download_input(year: i32, day: u32) -> Result<String, Box<dyn Error>> {
     let current_year = chrono::Local::now().year();
     assert!(year > 2010);
     assert!(year <= current_year);
     assert!(day > 0);
     assert!(day <= 31);
-    let uri: Uri = format!("https://adventofcode.com/{}/day/{}/input", year, day)
-        .parse()
-        .unwrap();
+    let uri: Uri = format!("https://adventofcode.com/{}/day/{}/input", year, day).parse()?;
     let https = HttpsConnector::new();
     let client = Client::builder().build::<_, hyper::Body>(https);
     let request = Request::builder().uri(uri)
@@ -46,14 +50,14 @@ pub async fn download_input(year: i32, day: u32) -> String {
         // .header("Sec-Fetch-User", "?1")
         // .header("Cache-Control", "max-age=0")
         // .header("TE", "trailers")
-        .body(Body::empty()).unwrap();
-    let resp = client.request(request).await.unwrap();
+        .body(Body::empty())?;
+    let resp = client.request(request).await?;
     let bytes = hyper::body::to_bytes(resp.into_body())
         .await
         .unwrap()
         .to_vec();
     let mut s = String::new();
     let mut d = GzDecoder::new(bytes.as_slice());
-    d.read_to_string(&mut s).unwrap();
-    s
+    d.read_to_string(&mut s)?;
+    Ok(s)
 }

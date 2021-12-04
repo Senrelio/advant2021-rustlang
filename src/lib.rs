@@ -7,5 +7,5 @@ pub fn get_input(day: u32) -> String {
     f.read_to_string(&mut s).unwrap();
     s
     // let path = format!("../../inputs/day{}_input", day);
-    // include_str!()
+    // include_str!(&path)
 }
