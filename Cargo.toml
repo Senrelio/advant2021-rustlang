@@ -1,5 +1,5 @@
 [package]
-name = "advant2020"
+name = "advent2020"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,8 +12,6 @@ path = "./src/lib.rs"
 # chrono = "*"
 regex = "*"
 lazy_static = "*"
-
-[build-dependencies]
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
 chrono = "*"
 hyper-tls = "*"

@@ -61,3 +61,4 @@ pub async fn download_input(year: i32, day: u32) -> Result<String, Box<dyn Error
     d.read_to_string(&mut s)?;
     Ok(s)
 }
+
