@@ -148,6 +148,7 @@ fn vertical<const N: usize>(arr: [[bool; N]; N]) -> bool {
     false
 }
 
+#[allow(unused)]
 fn diagonal<const N: usize>(arr: [[bool; N]; N]) -> bool {
     let down = (0..N).map(|i| arr[i][i]).all(|n| n);
     let up = (0..N).map(|i| arr[N - 1 - i][i]).all(|n| n);

@@ -1,4 +1,4 @@
-use advant2020::get_input;
+use advent2020::get_input;
 use lazy_static::lazy_static;
 
 lazy_static! {

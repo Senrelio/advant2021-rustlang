@@ -1,4 +1,4 @@
-use advant2020::get_input;
+use advent2020::get_input;
 
 fn main() {
     let input = get_input(1);
