@@ -1,17 +1,17 @@
 fn main() {
     let input = include_str!("../../inputs/day6_input");
-    println!("day 6 part 1: {}", part1(input, 80));
-    println!("day 6 part 2: {}", part2(input, 256));
+    println!("day 6 part 1: {}", part1(input));
+    println!("day 6 part 2: {}", part2(input));
 }
 
-fn part1(input: &str, days: usize) -> u128 {
-    _solution(input, days)
+fn part1(input: &str) -> u128 {
+    solution(input, 80)
 }
-fn part2(input: &str, days: usize) -> u128 {
-    _solution(input, days)
+fn part2(input: &str) -> u128 {
+    solution(input, 256)
 }
 
-fn _solution(input: &str, day: usize) -> u128 {
+fn solution(input: &str, day: usize) -> u128 {
     let input: Vec<usize> = input
         .split(',')
         .map(|i| i.trim().parse().unwrap())
@@ -37,12 +37,12 @@ mod tests_day6 {
     #[test]
     fn part1_test() {
         let input = include_str!("../../inputs/day6_test");
-        assert_eq!(26, part1(input, 18));
-        assert_eq!(5934, part1(input, 80));
+        assert_eq!(26, solution(input, 18));
+        assert_eq!(5934, solution(input, 80));
     }
     #[test]
     fn part2_test() {
         let input = include_str!("../../inputs/day6_test");
-        assert_eq!(26984457539u128, part2(input, 256));
+        assert_eq!(26984457539u128, solution(input, 256));
     }
 }
