@@ -1,4 +1,3 @@
-use advent2020::get_input;
 use lazy_static::lazy_static;
 
 lazy_static! {
@@ -6,7 +5,7 @@ lazy_static! {
 }
 
 fn main() {
-    let input = get_input(2);
+    let input = include_str!("../../inputs/day2_input");
     println!("day2 part1: {}", part1(&input));
     println!("day2 part2: {}", part2(&input));
 }

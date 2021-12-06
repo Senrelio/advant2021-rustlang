@@ -1,7 +1,6 @@
-use advent2020::get_input;
 
 fn main() {
-    let input = get_input(1);
+    let input = include_str!("../../inputs/day1_input");
     part1(&input);
     part2(&input);
 }

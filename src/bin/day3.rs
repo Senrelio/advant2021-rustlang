@@ -1,5 +1,5 @@
 fn main() {
-    let input = advent2020::get_input(3);
+    let input = include_str!("../../inputs/day3_input");
     // anyway to get single line length at compile time? it should be possible.
     let input = pretreat::<12>(&input);
     println!("day3 part1: {}", part1(&input));
