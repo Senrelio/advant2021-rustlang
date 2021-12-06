@@ -1,5 +1,5 @@
 [package]
-name = "advent2020"
+name = "advent2021"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,8 +8,6 @@ edition = "2021"
 path = "./src/lib.rs"
 
 [dependencies]
-# tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
-# chrono = "*"
 regex = "*"
 lazy_static = "*"
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
