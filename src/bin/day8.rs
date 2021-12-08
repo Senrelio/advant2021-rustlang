@@ -47,6 +47,23 @@ fn part1(input: &str) -> usize {
         })
         .count()
 }
+lazy_static::lazy_static! {
+    static ref COMB_DICT: HashMap<&'static str, char> = {
+        let mut map = HashMap::new();
+        map.insert("abcefg", '0');
+        map.insert("cf", '1');
+        map.insert("acdeg", '2');
+        map.insert("acdfg", '3');
+        map.insert("bcdf", '4');
+        map.insert("abdfg", '5');
+        map.insert("abdefg", '6');
+        map.insert("acf", '7');
+        map.insert("abcdefg", '8');
+        map.insert("abcdfg", '9');
+        map
+    };
+}
+
 
 fn part2(input: &str) -> u128 {
     let mut sum = 0u128;
@@ -165,23 +182,6 @@ fn subtract_comb_from_sum(sum: &mut HashMap<char, (usize, bool)>, comb: &str) {
         let v = sum.get_mut(&c).unwrap();
         *v = (v.0 - 1, v.1);
     }
-}
-
-lazy_static::lazy_static! {
-    static ref COMB_DICT: HashMap<&'static str, char> = {
-        let mut map = HashMap::new();
-        map.insert("abcefg", '0');
-        map.insert("cf", '1');
-        map.insert("acdeg", '2');
-        map.insert("acdfg", '3');
-        map.insert("bcdf", '4');
-        map.insert("abdfg", '5');
-        map.insert("abdefg", '6');
-        map.insert("acf", '7');
-        map.insert("abcdefg", '8');
-        map.insert("abcdfg", '9');
-        map
-    };
 }
 
 #[cfg(test)]
