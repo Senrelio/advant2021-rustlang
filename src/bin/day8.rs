@@ -102,14 +102,7 @@ struct Entry<'a> {
 
 impl<'a> Entry<'a> {
     fn dict(&self) -> HashMap<char, char> {
-        let mut char_dict = HashMap::with_capacity(7); // map[str:Option<number>]
-                                                       // char_dict.insert('a', None);
-                                                       // char_dict.insert('b', None);
-                                                       // char_dict.insert('c', None);
-                                                       // char_dict.insert('d', None);
-                                                       // char_dict.insert('e', None);
-                                                       // char_dict.insert('f', None);
-                                                       // char_dict.insert('g', None);
+        let mut char_dict = HashMap::with_capacity(7);
         let heads = self.heads;
         // c, f
         let comb_1 = heads.iter().find(|s| s.chars().count() == 2).unwrap();
@@ -128,6 +121,11 @@ impl<'a> Entry<'a> {
                 d
             },
         );
+        //                a          b              c              d              e              f              g
+        //                8          6(unique)      8              7              4(unique)      9(unique)      7           
+        //  - 1[c,f]      8          6(unique)      7              7              4(unique)      8(unique)      7           ! no unique count appears
+        //  - 4[b,c,d,e]  8(unique)  5(unique)      6              6              3(unique)      8(unique)      7(unique)
+        //  - 7[a,c,f]    7(unique)  5(unique)      5(unique)      6(unique)      3(unique)      7(unique)      7(unique)
         char_dict.insert(tick(&mut encoded_sum, 6), 'b');
         char_dict.insert(tick(&mut encoded_sum, 4), 'e');
         char_dict.insert(tick(&mut encoded_sum, 9), 'f');
