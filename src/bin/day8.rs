@@ -1,11 +1,15 @@
-use std::{collections::HashMap, panic};
+use std::{collections::HashMap, time::Instant};
 
 use regex::Regex;
 
 fn main() {
     let input = include_str!("../../inputs/day8_input");
     println!("day8 part1: {}", part1(input));
+    let begin = Instant::now();
     println!("day8 part2: {}", part2(input));
+    let end = Instant::now();
+    let time_cost = end.duration_since(begin);
+    println!("part2 costs {} microseconds", time_cost.as_micros());
 }
 
 // n  seg_n digits
@@ -49,7 +53,12 @@ fn part2(input: &str) -> u128 {
     for entry in pretreat(input) {
         let dict = entry.dict();
         let tails = entry.tails;
-        let n_str: String = tails.into_iter().map(|s| comb_to_char(s, &dict)).collect();
+        let n_str = String::from_iter(tails.into_iter().map(|s| {
+            let mut comb: Vec<char> = s.chars().map(|c| *dict.get(&c).unwrap()).collect();
+            comb.sort();
+            let comb = String::from_iter(comb.into_iter());
+            *COMB_DICT.get(comb.as_str()).unwrap()
+        }));
         let n = u128::from_str_radix(&n_str, 10).unwrap();
         sum += n;
     }
@@ -102,6 +111,7 @@ struct Entry<'a> {
 
 impl<'a> Entry<'a> {
     fn dict(&self) -> HashMap<char, char> {
+        // could optimize by mapping char to usize, to remove hashmap allocation
         let mut char_dict = HashMap::with_capacity(7);
         let heads = self.heads;
         // c, f
@@ -122,7 +132,7 @@ impl<'a> Entry<'a> {
             },
         );
         //                a          b              c              d              e              f              g
-        //                8          6(unique)      8              7              4(unique)      9(unique)      7           
+        //                8          6(unique)      8              7              4(unique)      9(unique)      7
         //  - 1[c,f]      8          6(unique)      7              7              4(unique)      8(unique)      7           ! no unique count appears
         //  - 4[b,c,d,e]  8(unique)  5(unique)      6              6              3(unique)      8(unique)      7(unique)
         //  - 7[a,c,f]    7(unique)  5(unique)      5(unique)      6(unique)      3(unique)      7(unique)      7(unique)
@@ -172,17 +182,6 @@ lazy_static::lazy_static! {
         map.insert("abcdfg", '9');
         map
     };
-}
-
-fn comb_to_char(comb: &str, dict: &HashMap<char, char>) -> char {
-    let mut comb: Vec<char> = comb.chars().map(|c| *dict.get(&c).unwrap()).collect();
-    comb.sort();
-    let comb: String = comb.into_iter().collect();
-    if let Some(c) = COMB_DICT.get(comb.as_str()) {
-        *c
-    } else {
-        panic!("comb_dict has no {}", &comb);
-    }
 }
 
 #[cfg(test)]
