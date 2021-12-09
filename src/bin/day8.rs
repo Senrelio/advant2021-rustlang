@@ -148,11 +148,11 @@ impl<'a> Entry<'a> {
                 d
             },
         );
-        //                a          b              c              d              e              f              g
-        //                8          6(unique)      8              7              4(unique)      9(unique)      7
-        //  - 1[c,f]      8          6(unique)      7              7              4(unique)      8(unique)      7           ! no unique count appears
-        //  - 4[b,c,d,e]  8(unique)  5(unique)      6              6              3(unique)      8(unique)      7(unique)
-        //  - 7[a,c,f]    7(unique)  5(unique)      5(unique)      6(unique)      3(unique)      7(unique)      7(unique)
+//                a            b              c              d              e              f              g
+//                8            6(unique)      8              7              4(unique)      9(unique)      7
+//  - 1[c,f]      8            6(unique)      7              7              4(unique)      8(unique)      7           ! no unique count appears
+//  - 4[b,c,d,e]  8(unique)    5(unique)      6              6              3(unique)      8(unique)      7(unique)
+//  - 7[a,c,f]    7(unique)    5(unique)      5(unique)      6(unique)      3(unique)      7(unique)      7(unique)
         char_dict.insert(tick(&mut encoded_sum, 6), 'b');
         char_dict.insert(tick(&mut encoded_sum, 4), 'e');
         char_dict.insert(tick(&mut encoded_sum, 9), 'f');
