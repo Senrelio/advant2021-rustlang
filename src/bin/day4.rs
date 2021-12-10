@@ -72,7 +72,7 @@ fn pretreat(input: &str) -> (Vec<u32>, Vec<Board>) {
     let mut boards = vec![];
     for (idx, block) in num_blocks.enumerate() {
         let mut board = Board {
-            idx,
+            _idx: idx,
             nums: HashMap::with_capacity(25),
             ticked: [[false; 5]; 5],
             won: false,
@@ -89,7 +89,7 @@ fn pretreat(input: &str) -> (Vec<u32>, Vec<Board>) {
 
 #[derive(Debug)]
 struct Board {
-    idx: usize,
+    _idx: usize,
     nums: HashMap<u32, (usize, usize)>,
     ticked: [[bool; 5]; 5],
     won: bool,
@@ -205,7 +205,7 @@ fn score_test() {
     nums.insert(15, (1, 2));
     nums.insert(13, (3, 2));
     let b = Board {
-        idx: 2,
+        _idx: 2,
         nums,
         ticked: [
             [true, true, true, true, true],

@@ -1,4 +1,3 @@
-
 fn main() {
     let input = include_str!("../../inputs/day1_input");
     part1(&input);
