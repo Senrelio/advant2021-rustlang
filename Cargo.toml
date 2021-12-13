@@ -15,3 +15,4 @@ chrono = "*"
 hyper-tls = "*"
 hyper = { version = "*", features = ["client", "http1", "http2"] }
 flate2 = "1.0"
+petgraph = "0.6.0"

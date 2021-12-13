@@ -49,7 +49,7 @@ impl Matrix {
                 self.m[r][c] += 1;
                 if self.m[r][c] == 10 {
                     to_flash.insert((r, c));
-                    adjancant.extend(adjancant_of(r, c));
+                    adjancant.extend(surrounding(r, c));
                 }
             }
         }
@@ -65,10 +65,10 @@ impl Matrix {
                 self.m[r][c] += 1;
                 if self.m[r][c] == 10 {
                     to_flash.insert((r, c));
-                    temp.extend(adjancant_of(r, c));
+                    temp.extend(surrounding(r, c));
                 }
             }
-            core::mem::swap(&mut adjancant, &mut temp);
+            adjancant = temp;
         }
         // before next day, set all point over 9 to 0;
         // count flashed
@@ -86,7 +86,7 @@ impl Matrix {
     }
 }
 
-fn adjancant_of(r: usize, c: usize) -> Vec<(usize, usize)> {
+fn surrounding(r: usize, c: usize) -> Vec<(usize, usize)> {
     let r = r as i8;
     let c = c as i8;
     [
