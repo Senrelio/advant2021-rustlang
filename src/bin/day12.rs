@@ -211,6 +211,10 @@ impl<'a> Graph<'a> {
                 })
                 .flatten()
                 .collect();
+            // println!(
+            //     "round {}: journeies: {:?}, paths: {:?}",
+            //     i, &journeies, &paths
+            // );
             if journeies.is_empty() {
                 break;
             }
@@ -236,10 +240,10 @@ impl<'a> Graph<'a> {
                         .iter()
                         .filter(|e| {
                             let not_start = e.to_id != "start";
-                            let small_cave_flag = !(matches!(
+                            let small_cave_flag = if matches!(
                                 self.nodes.get(&e.to_id).unwrap().node_type,
                                 NodeType::Small
-                            ) & {
+                            ) {
                                 let mut small_so_far: Vec<NodeId> = j
                                     .clone()
                                     .into_iter()
@@ -256,7 +260,9 @@ impl<'a> Graph<'a> {
                                     small_so_far.into_iter().collect();
                                 let len_after = set.len();
                                 len - len_after <= 1
-                            });
+                            } else {
+                                true
+                            };
                             not_start & small_cave_flag
                         })
                         .map(|e| e.to_id);
@@ -274,6 +280,10 @@ impl<'a> Graph<'a> {
                 })
                 .flatten()
                 .collect();
+            // println!(
+            //     "round {}: journeies: {:?}, paths: {:?}",
+            //     _i, &journeies, &paths
+            // );
             if journeies.is_empty() {
                 break;
             }
@@ -326,5 +336,12 @@ b-d
 A-end
 b-end";
         assert_eq!(36, part2(input));
+    }
+    #[test]
+    fn dedup_test() {
+        let mut a = vec![
+            "start", "b", "A", "c", "A", "b", "d", "b", "A", "c", "A", "b", "A", "b", "A", "c",
+            "A", "end",
+        ];
     }
 }
