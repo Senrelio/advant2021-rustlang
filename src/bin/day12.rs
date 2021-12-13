@@ -33,7 +33,6 @@ fn pretreat(input: &str) -> Graph {
         let caps = RE.captures(line.trim()).unwrap();
         let l = caps.name("l").unwrap().as_str();
         let r = caps.name("r").unwrap().as_str();
-        println!("{} - {}", l, r);
         let l_edge = Edge { to_id: r };
         let r_edge = Edge { to_id: l };
         nodes.entry(l).or_insert(match l {
