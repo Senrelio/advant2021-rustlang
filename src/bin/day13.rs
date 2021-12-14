@@ -27,17 +27,7 @@ fn part2(input: &str) {
     }
     let max_x = points.iter().max_by_key(|p| p.x).unwrap().x;
     let max_y = points.iter().max_by_key(|p| p.y).unwrap().y;
-    let mut matrix = {
-        let mut m = Vec::with_capacity(max_y);
-        let mut row = Vec::with_capacity(max_x);
-        for _ in 0..=max_x {
-            row.push('.');
-        }
-        for _ in 0..=max_y {
-            m.push(row.clone());
-        }
-        m
-    };
+    let mut matrix = vec![vec!['.'; max_x + 1]; max_y + 1];
     for Point { x, y } in points {
         matrix[y][x] = '#';
     }
@@ -105,7 +95,7 @@ fn pretreat(input: &str) -> (HashSet<Point>, Vec<Fold>) {
         let y = caps.name("y").unwrap().as_str().parse().unwrap();
         points.insert(Point { x, y });
     }
-    for line in section_2.lines() {
+    for line in section_2.lines().filter(|l| !l.is_empty()) {
         let line = line.trim();
         let caps = FOLD.captures(line).unwrap();
         let n = caps.name("num").unwrap().as_str().parse().unwrap();

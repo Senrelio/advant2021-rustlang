@@ -17,11 +17,6 @@ fn part2(input: &str) -> usize {
     pathes.len()
 }
 
-struct Part1Context<'g> {
-    journeies: Vec<Vec<&'g str>>, // = vec![vec!["start"]];
-    paths: Vec<Vec<&'g str>>,     // = vec![];
-}
-
 lazy_static::lazy_static! {
     static ref RE: regex::Regex = regex::Regex::new(r"(?P<l>.*)-(?P<r>.*)").unwrap();
 }
