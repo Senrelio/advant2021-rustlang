@@ -5,6 +5,7 @@ use binary_tree_utils::*;
 fn main() {
     let input = include_str!("../../inputs/day18_input");
     println!("day18 part1:{}", part1(input));
+    println!("day18 part2:{}", part2(input));
 }
 
 fn part1(input: &str) -> u32 {
@@ -28,12 +29,50 @@ fn part1(input: &str) -> u32 {
     final_tree.magnitude(1)
 }
 
-#[derive(Debug)]
+fn part2(input: &str) -> u32 {
+    let trees = input
+        .lines()
+        .map(|s| s.trim().parse::<BinaryTree>().unwrap())
+        .collect::<Vec<BinaryTree>>();
+    let mut magnitudes = vec![];
+    for l in 0..trees.len() {
+        'inner: for r in 0..trees.len() {
+            if l == r {
+                continue 'inner;
+            }
+            let mut sum = trees[l].clone().merge(trees[r].clone());
+            sum.process();
+            magnitudes.push(sum.magnitude(1));
+        }
+    }
+    magnitudes.iter().max().unwrap().clone()
+}
+
+#[derive(Debug, Clone)]
 pub struct BinaryTree {
     arr: Vec<Option<Node>>,
 }
 
 impl BinaryTree {
+    fn process(&mut self) -> Option<()> {
+        let mut flag = false;
+        loop {
+            if let Some(_) = self.explode() {
+                flag = true;
+                continue;
+            }
+            if let Some(_) = self.split() {
+                flag = true;
+                continue;
+            }
+            break;
+        }
+        if flag {
+            Some(())
+        } else {
+            None
+        }
+    }
     fn with_depth(depth: usize) -> Self {
         let arr = vec![None; 2usize.pow(depth as u32)];
         Self { arr }
@@ -499,5 +538,10 @@ mod tests {
     fn part1_test() {
         let input = include_str!("../../inputs/day18_test");
         assert_eq!(4140, part1(input));
+    }
+    #[test]
+    fn part2_test() {
+        let input = include_str!("../../inputs/day18_test");
+        assert_eq!(3993, part2(input));
     }
 }
