@@ -38,24 +38,11 @@ impl BinaryTree {
         let arr = vec![None; 2usize.pow(depth as u32)];
         Self { arr }
     }
-    fn extend(&mut self, n_layer: usize) {
-        let depth = self.depth();
-        for d in depth..depth + n_layer {
-            self.arr.extend(vec![None; 2usize.pow(d as u32)]);
-        }
-    }
     fn set(&mut self, idx: usize, node: Node) {
-        // if idx == 36 {
-        //     // print_tree(&self);
-        //     // dbg!(&node);
-        // }
         self.arr[idx] = Some(node);
     }
     fn get(&self, idx: usize) -> Option<&Node> {
         self.arr.get(idx).unwrap().as_ref()
-    }
-    fn get_mut(&mut self, idx: usize) -> &mut Option<Node> {
-        self.arr.get_mut(idx).unwrap()
     }
     fn depth(&self) -> usize {
         format!("{:#b}", self.arr.len()).len() - 2 - 1
@@ -81,17 +68,29 @@ impl BinaryTree {
         let start = 2usize.pow((self.depth() - 1) as u32);
         self.post_order_travelsal_from(start)
     }
+    fn cleanup(mut self) -> BinaryTree {
+        for d in 1..=self.depth() {
+            if self.arr[2usize.pow(d as u32 - 1)..=2usize.pow(d as u32) - 1]
+                .iter()
+                .all(|n| n.is_none())
+            {
+                self.arr = self.arr[..2usize.pow(d as u32 - 1)].to_vec();
+            }
+        }
+        self
+    }
     fn merge(self, r: BinaryTree) -> BinaryTree {
         let mut l_layers = {
             let depth = self.depth();
             let mut l_layers = vec![];
             for d in 1..=depth {
                 let line_range = 2u32.pow((d as u32) - 1)..2u32.pow(d as u32);
-                l_layers.push(
-                    line_range
-                        .map(|idx| self.arr[idx as usize])
-                        .collect::<Vec<Option<Node>>>(),
-                );
+                let line = line_range
+                    .map(|idx| self.arr[idx as usize])
+                    .collect::<Vec<Option<Node>>>();
+                if line.iter().any(|n| n.is_some()) {
+                    l_layers.push(line);
+                }
             }
             l_layers
         };
@@ -100,28 +99,28 @@ impl BinaryTree {
             let mut r_layers = vec![];
             for d in 1..=depth {
                 let line_range = 2u32.pow((d as u32) - 1)..2u32.pow(d as u32);
-                r_layers.push(
-                    line_range
-                        .map(|idx| r.arr[idx as usize])
-                        .collect::<Vec<Option<Node>>>(),
-                );
+                let line = line_range
+                    .map(|idx| r.arr[idx as usize])
+                    .collect::<Vec<Option<Node>>>();
+                if line.iter().any(|n| n.is_some()) {
+                    r_layers.push(line);
+                }
             }
             r_layers
         };
-        if l_layers.len() != r_layers.len() {
-            let less_len = l_layers.len().min(r_layers.len());
-            let more_len = l_layers.len().max(r_layers.len());
+        let l_len = l_layers.len();
+        let r_len = r_layers.len();
+        if l_len != r_len {
+            let less_len = l_len.min(r_len);
+            let more_len = l_len.max(r_len);
             let diff = (less_len + 1..=more_len)
                 .map(|depth| vec![None; 2usize.pow(depth as u32 - 1)])
                 .collect::<Vec<Vec<Option<Node>>>>();
-            if l_layers.len() < r_layers.len() {
+            if l_len < r_len {
                 l_layers.extend(diff);
             } else {
                 r_layers.extend(diff);
             }
-        }
-        if l_layers.len() != r_layers.len() {
-            println!("merge when two trees have different size");
         }
         let mut arr = vec![None, Some(Node::Branch)];
         arr.extend(
@@ -135,7 +134,7 @@ impl BinaryTree {
                 })
                 .flatten(),
         );
-        BinaryTree { arr }
+        BinaryTree { arr }.cleanup()
     }
     fn children_recursive(&self, idx: usize) -> Vec<usize> {
         let mut current_parent = vec![idx];
@@ -176,7 +175,6 @@ impl BinaryTree {
         }
         let (l, pair, r) = check_pair(&leaves);
         if let Some((l_half, r_half)) = pair {
-            // println!("before explode, leaves: {:?}", &leaves);
             let (vlh, vrh) = (
                 self.node_value(l_half).unwrap(),
                 self.node_value(r_half).unwrap(),
@@ -198,7 +196,6 @@ impl BinaryTree {
                 let vr = self.node_value(idx_r).unwrap();
                 self.set(idx_r, Node::Leaf(vrh + vr));
             }
-            // println!("after explode, leaves: {:?}", &leaves);
             Some(())
         } else {
             None
@@ -209,7 +206,6 @@ impl BinaryTree {
             .post_order_traversal()
             .filter(|&i| matches!(self.arr[i], Some(Node::Leaf(_))))
             .collect::<Vec<usize>>();
-        // dbg!(&leaves);
         if let Some(i) = leaves
             .into_iter()
             .find(|&i| self.node_value(i).unwrap() >= 10)
@@ -217,13 +213,7 @@ impl BinaryTree {
             let value = self.node_value(i).unwrap();
             self.set(i, Node::Branch);
             let (vl, vr) = (value / 2, value - (value / 2));
-            // dbg!(i);
-            // println!("tree size: {}", self.arr.len());
             let (idx_l, idx_r) = self.children(i).unwrap();
-            // println!(
-            //     "split! divide {} into ({}, {}), children idx is ({}, {})",
-            //     &value, vl, vr, idx_l, idx_r
-            // );
             self.set(idx_l, Node::Leaf(vl));
             self.set(idx_r, Node::Leaf(vr));
             Some(())
@@ -358,6 +348,7 @@ mod binary_tree_utils {
         }
         (None, None, None)
     }
+    #[allow(dead_code)]
     pub fn print_tree(tree: &BinaryTree) {
         for i in 1..=tree.depth() {
             let line_range = 2u32.pow((i as u32) - 1)..2u32.pow(i as u32);
@@ -422,7 +413,7 @@ impl Iterator for PostOrderIterator {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Node {
     Branch,
     Leaf(u32),
@@ -430,16 +421,8 @@ enum Node {
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::Binary;
-
     use super::*;
 
-    // #[test]
-    // fn print_tree() {
-    //     let input = "[[1,2],[[3,4],5]]";
-    //     let tree = BinaryTree::from_str(input).unwrap();
-    //     _print_tree(&tree);
-    // }
     #[test]
     fn depth_test() {
         let tree = BinaryTree {
@@ -497,6 +480,9 @@ mod tests {
         let input = "[[[[[9,8],1],2],3],4]";
         let mut tree = BinaryTree::from_str(input).unwrap();
         tree.explode().unwrap();
+        tree = tree.cleanup();
+        let expect = BinaryTree::from_str("[[[[0,9],2],3],4]").unwrap();
+        assert_eq!(tree.arr, expect.arr);
     }
     #[test]
     fn magnitude_test() {
@@ -513,26 +499,5 @@ mod tests {
     fn part1_test() {
         let input = include_str!("../../inputs/day18_test");
         assert_eq!(4140, part1(input));
-    }
-
-    #[test]
-    fn playground() {
-        let mut tree_1 = BinaryTree::from_str("[1,1]").unwrap();
-        let mut tree_2 = BinaryTree::from_str("[2,2]").unwrap();
-        let mut tree_3 = BinaryTree::from_str("[3,3]").unwrap();
-        let mut tree_4 = BinaryTree::from_str("[4,4]").unwrap();
-        let tree = tree_1.merge(tree_2);
-        let arr = vec![
-            None,
-            Some(Node::Branch),
-            Some(Node::Branch),
-            Some(Node::Branch),
-            Some(Node::Leaf(1)),
-            Some(Node::Leaf(1)),
-            Some(Node::Leaf(2)),
-            Some(Node::Leaf(2)),
-        ];
-        let tree = BinaryTree { arr };
-        // print_tree(&tree);
     }
 }
